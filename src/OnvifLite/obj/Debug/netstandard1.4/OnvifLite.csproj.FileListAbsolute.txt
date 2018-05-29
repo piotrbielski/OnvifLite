@@ -1,0 +1,6 @@
+E:\biels\Documents\Projekty\OnvifLite\src\OnvifLite\bin\Debug\netstandard1.4\OnvifLite.deps.json
+E:\biels\Documents\Projekty\OnvifLite\src\OnvifLite\bin\Debug\netstandard1.4\OnvifLite.dll
+E:\biels\Documents\Projekty\OnvifLite\src\OnvifLite\obj\Debug\netstandard1.4\OnvifLite.csprojAssemblyReference.cache
+E:\biels\Documents\Projekty\OnvifLite\src\OnvifLite\obj\Debug\netstandard1.4\OnvifLite.csproj.CoreCompileInputs.cache
+E:\biels\Documents\Projekty\OnvifLite\src\OnvifLite\obj\Debug\netstandard1.4\OnvifLite.AssemblyInfoInputs.cache
+E:\biels\Documents\Projekty\OnvifLite\src\OnvifLite\obj\Debug\netstandard1.4\OnvifLite.AssemblyInfo.cs
