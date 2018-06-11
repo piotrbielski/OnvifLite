@@ -8,6 +8,6 @@ namespace OnvifLite.Factory
 {
     public interface ICameraFactory
     {
-        ICamera CreateCamera(string login, string password, IPAddress);
+        ICamera CreateCamera(string login, string password, IPAddress ipAddress);
     }
 }
