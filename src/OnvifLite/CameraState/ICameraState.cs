@@ -6,9 +6,9 @@ namespace OnvifLite.CameraState
 {
     public interface ICameraState
     {
-        void Connect();
+        void Connect(string login, string password);
+        void Disconnect();
         void StartStreaming();
         void StopStreaming();
-        void Disconnect();
     }
 }

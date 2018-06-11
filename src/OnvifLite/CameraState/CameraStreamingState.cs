@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using OnvifLite.Camera;
 
 namespace OnvifLite.CameraState
 {
     internal class CameraStreamingState : ICameraState
     {
-        public void Connect()
+        private readonly ICamera _camera;
+
+        public CameraStreamingState(ICamera camera)
         {
-            throw new NotImplementedException();
+            _camera = camera;
         }
 
-        public void Disconnect()
+        public void Connect()
         {
             throw new NotImplementedException();
         }
