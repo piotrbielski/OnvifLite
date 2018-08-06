@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
+using CameraMediaService;
+using OnvifLite.Attributes;
 using OnvifLite.Camera;
 
 namespace OnvifLite.CameraState
 {
+    [CameraState(CameraStateEnum.Streaming)]
     internal class CameraStreamingState : ICameraState
     {
         private readonly ICamera _camera;
@@ -19,7 +24,22 @@ namespace OnvifLite.CameraState
             throw new NotImplementedException();
         }
 
-        public void StartStreaming()
+        public void Connect(string login, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Disconnect()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Profile> GetProfiles()
+        {
+            throw new NotImplementedException();
+        }
+
+        public BlockingCollection<Bitmap> StartStreaming()
         {
             throw new NotImplementedException();
         }

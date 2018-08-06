@@ -1,6 +1,7 @@
-﻿using System;
+﻿using CameraMediaService;
 using System.Collections.Generic;
-using System.Text;
+using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace OnvifLite.CameraState
 {
@@ -8,7 +9,9 @@ namespace OnvifLite.CameraState
     {
         void Connect(string login, string password);
         void Disconnect();
-        void StartStreaming();
+        BlockingCollection<Bitmap> StartStreaming();
         void StopStreaming();
+
+        List<Profile> GetProfiles();
     }
 }

@@ -8,10 +8,11 @@ using System.ServiceModel;
 using CameraMediaService;
 using OnvifLite.CameraState;
 using OnvifLite.Attributes;
-using CameraMediaService;
 using CameraManagementService;
 using System.Reflection;
 using System.Linq;
+using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace OnvifLite.Camera
 {
@@ -19,11 +20,10 @@ namespace OnvifLite.Camera
     {
         public ICameraState CameraStateObject { get; set; }
 
-        public MediaClient MediaClient { get; set; }
-        public DeviceClient DeviceClient { get; set; }
+        public MediaClient MediaClient { get; private set; }
+        public DeviceClient DeviceClient { get; private set; }
 
         public System.Net.IPAddress IPAddress { get; set; }
-
         public Uri ServiceAddress => new Uri($"http://{IPAddress.ToString()}/onvif/device_service");
 
         public List<Profile> Profiles => State != CameraStateEnum.NotConnected ? MediaClient.GetProfilesAsync().Result.Profiles.ToList() : new List<Profile>();
@@ -35,9 +35,7 @@ namespace OnvifLite.Camera
                 var attributes = CameraStateObject.GetType().GetTypeInfo().GetCustomAttributes();
                 var cameraStateAttribute = attributes.First(x => x.GetType().FullName.Contains(nameof(CameraStateAttribute)));
 
-                var state = cameraStateAttribute as CameraStateAttribute;
-
-                if (state != null)
+                if (cameraStateAttribute is CameraStateAttribute state)
                     return state.State;
                 else
                     throw new Exception(); //todo wyjątek
@@ -49,22 +47,28 @@ namespace OnvifLite.Camera
             IPAddress = ipAddress;
             CameraStateObject = new CameraNotConnectedState(this);
         }
-        
+
         public Camera()
         {
             CameraStateObject = new CameraNotConnectedState(this);
         }
 
-        public void StartStreaming()
+        public void SetClients(DeviceClient deviceClient, MediaClient mediaClient)
         {
-            throw new NotImplementedException();
+            DeviceClient = deviceClient;
+            MediaClient = mediaClient;
+        }
+
+        public BlockingCollection<Bitmap> StartStreaming()
+        {
+            return CameraStateObject.StartStreaming();
         }
 
         public void StopStreaming()
         {
-            throw new NotImplementedException();
+            CameraStateObject.StopStreaming();
         }
-        
+
         public void Connect(string login, string password)
         {
             CameraStateObject.Connect(login, password);

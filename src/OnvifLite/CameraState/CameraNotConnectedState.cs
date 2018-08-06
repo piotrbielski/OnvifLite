@@ -7,8 +7,11 @@ using CameraManagementService;
 using System.ServiceModel.Channels;
 using System.ServiceModel;
 using System.Net;
+using System.Linq;
 using OnvifLite.Exceptions;
 using OnvifLite.Attributes;
+using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace OnvifLite.CameraState
 {
@@ -21,7 +24,7 @@ namespace OnvifLite.CameraState
         {
             _camera = camera;
         }
-        
+
         private MediaClient CreateMediaClient()
         {
             var messageBindingElement = new TextMessageEncodingBindingElement()
@@ -36,7 +39,7 @@ namespace OnvifLite.CameraState
 
             var customBinding = new CustomBinding(messageBindingElement, transportBindingElement);
 
-            var mediaClient = new MediaClient(customBinding, new EndpointAddress(_camera.IPAddress.ToString()));
+            var mediaClient = new MediaClient(customBinding, new EndpointAddress(_camera.ServiceAddress));
 
             return mediaClient;
         }
@@ -55,7 +58,7 @@ namespace OnvifLite.CameraState
 
             var customBinding = new CustomBinding(messageBindingElement, transportBindingElement);
 
-            var deviceClient = new DeviceClient(customBinding, new EndpointAddress(_camera.IPAddress.ToString()));
+            var deviceClient = new DeviceClient(customBinding, new EndpointAddress(_camera.ServiceAddress));
 
             return deviceClient;
         }
@@ -65,43 +68,58 @@ namespace OnvifLite.CameraState
             var credential = new NetworkCredential(login, password);
 
             var mediaClient = CreateMediaClient();
-            mediaClient.ClientCredentials.HttpDigest.ClientCredential = credential;
+            //not supported in net standard
+            //mediaClient.ClientCredentials.HttpDigest.ClientCredential = credential;
 
             var deviceClient = CreateDeviceClient();
-            deviceClient.ClientCredentials.HttpDigest.ClientCredential = credential;
+            //not supported in net standard
+            //deviceClient.ClientCredentials.HttpDigest.ClientCredential = credential;
 
             try
             {
                 var timeTest = deviceClient.GetSystemDateAndTimeAsync().Result;
                 var profilesTest = mediaClient.GetProfilesAsync().Result;
             }
-            catch(EndpointNotFoundException endpointNotFoundException)
+            catch (AggregateException aggregateException)
+            {
+                var endpointNotFoundException = aggregateException.InnerExceptions.FirstOrDefault(x => x.GetType() == typeof(EndpointNotFoundException));
+
+                if (endpointNotFoundException != null)
+                    throw new CameraConnectionException("Can not connect to a camera with a defined address. Check the endpoint address.", endpointNotFoundException);
+                else
+                    throw new CameraConnectionException("An unknown error occurred while connecting to the camera. Check the endpoint address and the user credential.", aggregateException);
+            }
+            catch (EndpointNotFoundException endpointNotFoundException)
             {
                 throw new CameraConnectionException("Can not connect to a camera with a defined address. Check the endpoint address.", endpointNotFoundException);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 throw new CameraConnectionException("An unknown error occurred while connecting to the camera. Check the endpoint address and the user credential.", exception);
             }
 
-            _camera.DeviceClient = deviceClient;
-            _camera.MediaClient = mediaClient;
+            _camera.SetClients(deviceClient, mediaClient);
             _camera.CameraStateObject = new CameraConnectedState(_camera);
         }
 
-        public void StartStreaming()
+        public BlockingCollection<Bitmap> StartStreaming()
         {
-            throw new CameraConnectionException("Cannot start streaming, camera is not connected.");
+            throw new IncorrectCameraStateException("Cannot start streaming, camera is not connected.");
         }
 
         public void StopStreaming()
         {
-            throw new CameraConnectionException("Cannot stop streaming, camera is not connected.");
+            throw new IncorrectCameraStateException("Cannot stop streaming, camera is not connected.");
         }
 
         public void Disconnect()
         {
-            throw new CameraConnectionException("Camera has already been disconnected.");
+            throw new IncorrectCameraStateException("Camera has already been disconnected.");
+        }
+
+        public List<Profile> GetProfiles()
+        {
+            throw new IncorrectCameraStateException("The camera must be connected");
         }
     }
 }
