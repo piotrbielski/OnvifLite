@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using CameraMediaService;
-using OnvifLite.Camera;
 using OnvifLite.Exceptions;
 using System.Linq;
 using OnvifLite.Attributes;
@@ -19,13 +18,13 @@ namespace OnvifLite.CameraState
     [CameraState(CameraStateEnum.Connected)]
     internal class CameraConnectedState : ICameraState
     {
-        private readonly Camera.Camera _camera;
+        private readonly Camera _camera;
         private BlockingCollection<Bitmap> _frameQueue;
 
         private readonly CancellationTokenSource _tokenSource;
         private readonly CancellationToken _cancellationToken;
 
-        public CameraConnectedState(Camera.Camera camera)
+        public CameraConnectedState(Camera camera)
         {
             _camera = camera;
             _frameQueue = new BlockingCollection<Bitmap>(new ConcurrentQueue<Bitmap>(), 100);

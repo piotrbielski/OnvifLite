@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Text;
 using CameraMediaService;
 using OnvifLite.Attributes;
-using OnvifLite.Camera;
 
 namespace OnvifLite.CameraState
 {

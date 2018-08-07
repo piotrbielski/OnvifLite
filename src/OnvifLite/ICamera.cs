@@ -8,7 +8,7 @@ using OnvifLite.CameraState;
 using System.Collections.Concurrent;
 using System.Drawing;
 
-namespace OnvifLite.Camera
+namespace OnvifLite
 {
     public interface ICamera
     {

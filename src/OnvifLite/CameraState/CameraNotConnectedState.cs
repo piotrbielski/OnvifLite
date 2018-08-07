@@ -1,5 +1,4 @@
-﻿using OnvifLite.Camera;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using CameraMediaService;
@@ -18,9 +17,9 @@ namespace OnvifLite.CameraState
     [CameraState(CameraStateEnum.NotConnected)]
     internal class CameraNotConnectedState : ICameraState
     {
-        private readonly Camera.Camera _camera;
+        private readonly Camera _camera;
 
-        public CameraNotConnectedState(Camera.Camera camera)
+        public CameraNotConnectedState(Camera camera)
         {
             _camera = camera;
         }

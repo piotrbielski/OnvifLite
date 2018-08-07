@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Security;
-using System.ServiceModel;
 using CameraMediaService;
 using OnvifLite.CameraState;
 using OnvifLite.Attributes;
@@ -14,7 +10,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using System.Drawing;
 
-namespace OnvifLite.Camera
+namespace OnvifLite
 {
     internal class Camera : ICamera
     {

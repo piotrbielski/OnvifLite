@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Reference Include="EmguCVStandard">
-      <HintPath>..\Lib\EmguCVStandard.dll</HintPath>
+      <HintPath>..\..\lib\EmguCVStandard.dll</HintPath>
     </Reference>
   </ItemGroup>
 

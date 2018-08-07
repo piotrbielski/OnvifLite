@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using OnvifLite.Camera;
 using System.Net;
 
-namespace OnvifLite.Factory
+namespace OnvifLite
 {
     public interface ICameraFactory
     {
