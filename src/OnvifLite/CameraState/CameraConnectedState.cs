@@ -33,14 +33,13 @@ namespace OnvifLite.CameraState
             _cancellationToken = _tokenSource.Token;
         }
 
-        private void FrameProducer()
+        private void FrameProducer(string url)
         {
-            var producerActivity = true;
-            var capture = new VideoCapture("rtsp://admin:admin@192.168.1.10/idc=1&ids=1");
+            var capture = new VideoCapture(url);
             
             try
             {
-                while (producerActivity)
+                while (true)
                 {
                     var frame = capture.QueryFrame();
 
@@ -57,7 +56,7 @@ namespace OnvifLite.CameraState
                     _cancellationToken.ThrowIfCancellationRequested();
                 }
             }
-            catch (OperationCanceledException cancelException)
+            catch (OperationCanceledException)
             {
                 capture.Dispose();
             }
@@ -65,39 +64,46 @@ namespace OnvifLite.CameraState
 
         public void Connect()
         {
-            throw new IncorrectCameraStateException("Object has already connected with the camera");
-        }
-
-        public void Connect(string login, string password)
-        {
             throw new IncorrectCameraStateException("Camera has already been connected.");
         }
 
         public void Disconnect()
         {
             _camera.SetClients(null, null);
-            _camera.CameraStateObject = new CameraNotConnectedState(_camera);
+            _camera.StateObject = new CameraNotConnectedState(_camera);
         }
 
-        public BlockingCollection<Bitmap> StartStreaming()
+        public BlockingCollection<Bitmap> StartStreaming(Profile profile)
         {
-            var capture = new VideoCapture("rtsp://admin:admin@192.168.1.10/idc=1&ids=1");
+            StreamSetup streamSetup = new StreamSetup();
+            streamSetup.Stream = StreamType.RTPUnicast;
 
-            capture.QueryFrame();
+            streamSetup.Transport = new Transport();
+            streamSetup.Transport.Protocol = TransportProtocol.RTSP;
 
-            throw new NotImplementedException();
+            var streamingUrl = _camera.MediaClient.GetStreamUriAsync(streamSetup, profile.token).Result;
+            var urlParts = streamingUrl.Uri.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+            var url = string.Empty;
+
+            if (urlParts.Count() == 2)
+            {
+                url = $"{urlParts[0]}//{_camera.ConnectionUser.Login}:{_camera.ConnectionUser.Password}@{urlParts[1]}";
+            }
+            else
+            {
+                //todo exception
+            }
+
+            Task.Factory.StartNew(() => FrameProducer(url));
+
+            _camera.StateObject = new CameraStreamingState(_camera, _tokenSource);
+
+            return _frameQueue;
         }
 
         public void StopStreaming()
         {
             throw new IncorrectCameraStateException("First you need to start streaming.");
-        }
-
-        public List<Profile> GetProfiles()
-        {
-            var profiles = _camera.MediaClient.GetProfilesAsync().Result.Profiles;
-
-            return profiles.ToList();
         }
     }
 }

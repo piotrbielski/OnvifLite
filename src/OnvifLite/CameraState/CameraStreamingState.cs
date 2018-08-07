@@ -5,47 +5,44 @@ using System.Drawing;
 using System.Text;
 using CameraMediaService;
 using OnvifLite.Attributes;
+using System.Threading;
+using System.Linq;
+using OnvifLite.Exceptions;
 
 namespace OnvifLite.CameraState
 {
     [CameraState(CameraStateEnum.Streaming)]
     internal class CameraStreamingState : ICameraState
     {
-        private readonly ICamera _camera;
+        private readonly Camera _camera;
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
-        public CameraStreamingState(ICamera camera)
+        public CameraStreamingState(Camera camera, CancellationTokenSource cancellationTokenSource)
         {
             _camera = camera;
+            _cancellationTokenSource = cancellationTokenSource;
         }
-
+        
         public void Connect()
         {
-            throw new NotImplementedException();
-        }
-
-        public void Connect(string login, string password)
-        {
-            throw new NotImplementedException();
+            throw new IncorrectCameraStateException("Object has already connected with the camera");
         }
 
         public void Disconnect()
         {
-            throw new NotImplementedException();
+            _cancellationTokenSource.Cancel();
+            _camera.StateObject = new CameraNotConnectedState(_camera);
         }
 
-        public List<Profile> GetProfiles()
+        public BlockingCollection<Bitmap> StartStreaming(Profile profile)
         {
-            throw new NotImplementedException();
-        }
-
-        public BlockingCollection<Bitmap> StartStreaming()
-        {
-            throw new NotImplementedException();
+            throw new IncorrectCameraStateException("Object is streaming frames now");
         }
 
         public void StopStreaming()
         {
-            throw new NotImplementedException();
+            _cancellationTokenSource.Cancel();
+            _camera.StateObject = new CameraConnectedState(_camera);
         }
     }
 }

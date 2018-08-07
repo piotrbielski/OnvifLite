@@ -17,9 +17,11 @@ namespace OnvifLite
         CameraStateEnum State { get; }
         List<Profile> Profiles { get; }
 
+        CameraUser ConnectionUser { get; }
+
         void Connect(string login, string password);
         void Disconnect();
-        BlockingCollection<Bitmap> StartStreaming();
+        BlockingCollection<Bitmap> StartStreaming(Profile profile);
         void StopStreaming();
     }
 }

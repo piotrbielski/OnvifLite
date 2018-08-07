@@ -62,7 +62,7 @@ namespace OnvifLite.CameraState
             return deviceClient;
         }
 
-        public void Connect(string login, string password)
+        public void Connect()
         {
             var credential = new NetworkCredential(login, password);
 
@@ -98,10 +98,10 @@ namespace OnvifLite.CameraState
             }
 
             _camera.SetClients(deviceClient, mediaClient);
-            _camera.CameraStateObject = new CameraConnectedState(_camera);
+            _camera.StateObject = new CameraConnectedState(_camera);
         }
 
-        public BlockingCollection<Bitmap> StartStreaming()
+        public BlockingCollection<Bitmap> StartStreaming(Profile profile)
         {
             throw new IncorrectCameraStateException("Cannot start streaming, camera is not connected.");
         }
@@ -114,11 +114,6 @@ namespace OnvifLite.CameraState
         public void Disconnect()
         {
             throw new IncorrectCameraStateException("Camera has already been disconnected.");
-        }
-
-        public List<Profile> GetProfiles()
-        {
-            throw new IncorrectCameraStateException("The camera must be connected");
         }
     }
 }

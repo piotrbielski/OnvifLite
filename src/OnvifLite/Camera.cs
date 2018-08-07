@@ -14,7 +14,7 @@ namespace OnvifLite
 {
     internal class Camera : ICamera
     {
-        public ICameraState CameraStateObject { get; set; }
+        public ICameraState StateObject { get; set; }
 
         public MediaClient MediaClient { get; private set; }
         public DeviceClient DeviceClient { get; private set; }
@@ -24,11 +24,13 @@ namespace OnvifLite
 
         public List<Profile> Profiles => State != CameraStateEnum.NotConnected ? MediaClient.GetProfilesAsync().Result.Profiles.ToList() : new List<Profile>();
 
+        public CameraUser ConnectionUser { get; private set; }
+
         public CameraStateEnum State
         {
             get
             {
-                var attributes = CameraStateObject.GetType().GetTypeInfo().GetCustomAttributes();
+                var attributes = StateObject.GetType().GetTypeInfo().GetCustomAttributes();
                 var cameraStateAttribute = attributes.First(x => x.GetType().FullName.Contains(nameof(CameraStateAttribute)));
 
                 if (cameraStateAttribute is CameraStateAttribute state)
@@ -41,12 +43,12 @@ namespace OnvifLite
         public Camera(System.Net.IPAddress ipAddress)
         {
             IPAddress = ipAddress;
-            CameraStateObject = new CameraNotConnectedState(this);
+            StateObject = new CameraNotConnectedState(this);
         }
 
         public Camera()
         {
-            CameraStateObject = new CameraNotConnectedState(this);
+            StateObject = new CameraNotConnectedState(this);
         }
 
         public void SetClients(DeviceClient deviceClient, MediaClient mediaClient)
@@ -55,24 +57,25 @@ namespace OnvifLite
             MediaClient = mediaClient;
         }
 
-        public BlockingCollection<Bitmap> StartStreaming()
+        public BlockingCollection<Bitmap> StartStreaming(Profile profile)
         {
-            return CameraStateObject.StartStreaming();
+            return StateObject.StartStreaming(profile);
         }
 
         public void StopStreaming()
         {
-            CameraStateObject.StopStreaming();
+            StateObject.StopStreaming();
         }
 
         public void Connect(string login, string password)
         {
-            CameraStateObject.Connect(login, password);
+            ConnectionUser = new CameraUser(login, password);
+            StateObject.Connect(login, password);
         }
 
         public void Disconnect()
         {
-            CameraStateObject.Disconnect();
+            StateObject.Disconnect();
         }
     }
 }
