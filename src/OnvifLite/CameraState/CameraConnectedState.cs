@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using CameraMediaService;
 using OnvifLite.Exceptions;
 using System.Linq;
 using OnvifLite.Attributes;
 using System.Collections.Concurrent;
-//using System.Drawing;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Drawing;
@@ -47,11 +44,7 @@ namespace OnvifLite.CameraState
                     if (frame != null)
                     {
                         var b = frame.ToImage<Bgr, Byte>();
-                        Bitmap bb = b.ToBitmap();
-                    }
-                    else
-                    {
-                        //todo exception
+                        _frameQueue.Add(b.ToBitmap());
                     }
 
                     _cancellationToken.ThrowIfCancellationRequested();
@@ -85,21 +78,21 @@ namespace OnvifLite.CameraState
             streamSetup.Transport.Protocol = TransportProtocol.RTSP;
 
             var streamingUrl = mediaClient.GetStreamUriAsync(streamSetup, profile.token).Result;
-            var urlParts = streamingUrl.Uri.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-            var url = string.Empty;
+            var uriParts = streamingUrl.Uri.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+            var uri = string.Empty;
 
             mediaClient.Close();
 
-            if (urlParts.Count() == 2)
+            if (uriParts.Count() == 2)
             {
-                url = $"{urlParts[0]}//{_camera.ConnectionUser.Login}:{_camera.ConnectionUser.Password}@{urlParts[1]}";
+                uri = $"{uriParts[0]}//{_camera.ConnectionUser.Login}:{_camera.ConnectionUser.Password}@{uriParts[1]}";
             }
             else
             {
-                //todo exception
+                throw new InvalidUriAddressException("Stream URI address is incorrect.");
             }
 
-            Task.Factory.StartNew(() => FrameProducer(url));
+            Task.Factory.StartNew(() => FrameProducer(uri));
 
             _camera.StateObject = new CameraStreamingState(_camera, _tokenSource);
 

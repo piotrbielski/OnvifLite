@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace OnvifLite.CameraState
 {
-    public interface ICameraState
+    internal interface ICameraState
     {
         void Connect();
         void Disconnect();

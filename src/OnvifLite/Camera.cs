@@ -10,6 +10,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using System.Drawing;
 using OnvifLite.Proxy;
+using OnvifLite.Exceptions;
 
 namespace OnvifLite
 {
@@ -31,7 +32,7 @@ namespace OnvifLite
                 if (State == CameraStateEnum.NotConnected)
                     _ipAddress = value;
                 else
-                    throw new InvalidOperationException("The camera must be in an unconnected state.");
+                    throw new IncorrectCameraStateException("The camera must be in an unconnected state.");
             }
         }
 
@@ -51,7 +52,7 @@ namespace OnvifLite
                     }
                 }
                 else
-                    return new List<Profile>();
+                    throw new IncorrectCameraStateException("The camera must be in connected state.");
             }
         }
 
@@ -67,7 +68,7 @@ namespace OnvifLite
                 if (cameraStateAttribute is CameraStateAttribute state)
                     return state.State;
                 else
-                    throw new Exception(); //todo wyjątek
+                    throw new MissingExpectedAttributeException("CameraStateAttribute not found.");
             }
         }
 

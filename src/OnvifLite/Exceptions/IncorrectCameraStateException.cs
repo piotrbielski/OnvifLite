@@ -7,7 +7,7 @@ namespace OnvifLite.Exceptions
     public class IncorrectCameraStateException : Exception
     {
         public IncorrectCameraStateException()
-            : base("Incorrect camera state")
+            : base("Incorrect camera state.")
         {
         }
 
