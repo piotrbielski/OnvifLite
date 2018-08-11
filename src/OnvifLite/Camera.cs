@@ -9,20 +9,51 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Concurrent;
 using System.Drawing;
+using OnvifLite.Proxy;
 
 namespace OnvifLite
 {
     internal class Camera : ICamera
     {
+        private System.Net.IPAddress _ipAddress;
+
         public ICameraState StateObject { get; set; }
 
-        public MediaClient MediaClient { get; private set; }
-        public DeviceClient DeviceClient { get; private set; }
+        public System.Net.IPAddress IPAddress
+        {
+            get
+            {
+                return _ipAddress;
+            }
 
-        public System.Net.IPAddress IPAddress { get; set; }
-        public Uri ServiceAddress => new Uri($"http://{IPAddress.ToString()}/onvif/device_service");
+            set
+            {
+                if (State == CameraStateEnum.NotConnected)
+                    _ipAddress = value;
+                else
+                    throw new InvalidOperationException("The camera must be in an unconnected state.");
+            }
+        }
 
-        public List<Profile> Profiles => State != CameraStateEnum.NotConnected ? MediaClient.GetProfilesAsync().Result.Profiles.ToList() : new List<Profile>();
+        public Uri ServiceAddress => _ipAddress != null 
+            ? new Uri($"http://{IPAddress.ToString()}/onvif/device_service") 
+            : throw new InvalidOperationException("The camera does not have a IP address.");
+        
+        public List<Profile> Profiles
+        {
+            get
+            {
+                if (State != CameraStateEnum.NotConnected)
+                {
+                    using (var mediaClient = ProxyFactory<Media, MediaClient>.Create(ServiceAddress))
+                    {
+                        return mediaClient.GetProfilesAsync().Result.Profiles.ToList();
+                    }
+                }
+                else
+                    return new List<Profile>();
+            }
+        }
 
         public CameraUser ConnectionUser { get; private set; }
 
@@ -51,12 +82,6 @@ namespace OnvifLite
             StateObject = new CameraNotConnectedState(this);
         }
 
-        public void SetClients(DeviceClient deviceClient, MediaClient mediaClient)
-        {
-            DeviceClient = deviceClient;
-            MediaClient = mediaClient;
-        }
-
         public BlockingCollection<Bitmap> StartStreaming(Profile profile)
         {
             return StateObject.StartStreaming(profile);
@@ -70,7 +95,7 @@ namespace OnvifLite
         public void Connect(string login, string password)
         {
             ConnectionUser = new CameraUser(login, password);
-            StateObject.Connect(login, password);
+            StateObject.Connect();
         }
 
         public void Disconnect()

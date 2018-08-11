@@ -11,6 +11,7 @@ using OnvifLite.Exceptions;
 using OnvifLite.Attributes;
 using System.Collections.Concurrent;
 using System.Drawing;
+using OnvifLite.Proxy;
 
 namespace OnvifLite.CameraState
 {
@@ -24,60 +25,14 @@ namespace OnvifLite.CameraState
             _camera = camera;
         }
 
-        private MediaClient CreateMediaClient()
-        {
-            var messageBindingElement = new TextMessageEncodingBindingElement()
-            {
-                MessageVersion = MessageVersion.CreateVersion(EnvelopeVersion.Soap12, AddressingVersion.WSAddressing10)
-            };
-
-            var transportBindingElement = new HttpTransportBindingElement()
-            {
-                AuthenticationScheme = AuthenticationSchemes.Digest
-            };
-
-            var customBinding = new CustomBinding(messageBindingElement, transportBindingElement);
-
-            var mediaClient = new MediaClient(customBinding, new EndpointAddress(_camera.ServiceAddress));
-
-            return mediaClient;
-        }
-
-        private DeviceClient CreateDeviceClient()
-        {
-            var messageBindingElement = new TextMessageEncodingBindingElement()
-            {
-                MessageVersion = MessageVersion.CreateVersion(EnvelopeVersion.Soap12, AddressingVersion.WSAddressing10)
-            };
-
-            var transportBindingElement = new HttpTransportBindingElement()
-            {
-                AuthenticationScheme = AuthenticationSchemes.Digest
-            };
-
-            var customBinding = new CustomBinding(messageBindingElement, transportBindingElement);
-
-            var deviceClient = new DeviceClient(customBinding, new EndpointAddress(_camera.ServiceAddress));
-
-            return deviceClient;
-        }
-
         public void Connect()
         {
-            var credential = new NetworkCredential(login, password);
-
-            var mediaClient = CreateMediaClient();
-            //not supported in net standard
-            //mediaClient.ClientCredentials.HttpDigest.ClientCredential = credential;
-
-            var deviceClient = CreateDeviceClient();
-            //not supported in net standard
-            //deviceClient.ClientCredentials.HttpDigest.ClientCredential = credential;
-
             try
             {
-                var timeTest = deviceClient.GetSystemDateAndTimeAsync().Result;
-                var profilesTest = mediaClient.GetProfilesAsync().Result;
+                using (var deviceClient = ProxyFactory<Device, DeviceClient>.Create(_camera.ServiceAddress))
+                {
+                    var timeTest = deviceClient.GetSystemDateAndTimeAsync().Result;
+                }
             }
             catch (AggregateException aggregateException)
             {
@@ -97,7 +52,6 @@ namespace OnvifLite.CameraState
                 throw new CameraConnectionException("An unknown error occurred while connecting to the camera. Check the endpoint address and the user credential.", exception);
             }
 
-            _camera.SetClients(deviceClient, mediaClient);
             _camera.StateObject = new CameraConnectedState(_camera);
         }
 

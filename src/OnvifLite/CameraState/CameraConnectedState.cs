@@ -12,6 +12,7 @@ using System.Threading;
 using System.Drawing;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using OnvifLite.Proxy;
 
 namespace OnvifLite.CameraState
 {
@@ -69,21 +70,25 @@ namespace OnvifLite.CameraState
 
         public void Disconnect()
         {
-            _camera.SetClients(null, null);
             _camera.StateObject = new CameraNotConnectedState(_camera);
         }
 
         public BlockingCollection<Bitmap> StartStreaming(Profile profile)
         {
+            var proxyFactory = new ProxyFactory<Media, MediaClient>();
+            var mediaClient = proxyFactory.CreateProxy(_camera.ServiceAddress);
+
             StreamSetup streamSetup = new StreamSetup();
             streamSetup.Stream = StreamType.RTPUnicast;
 
             streamSetup.Transport = new Transport();
             streamSetup.Transport.Protocol = TransportProtocol.RTSP;
 
-            var streamingUrl = _camera.MediaClient.GetStreamUriAsync(streamSetup, profile.token).Result;
+            var streamingUrl = mediaClient.GetStreamUriAsync(streamSetup, profile.token).Result;
             var urlParts = streamingUrl.Uri.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
             var url = string.Empty;
+
+            mediaClient.Close();
 
             if (urlParts.Count() == 2)
             {
