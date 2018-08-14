@@ -55,7 +55,7 @@ namespace OnvifLite.CameraState
             _camera.StateObject = new CameraConnectedState(_camera);
         }
 
-        public BlockingCollection<Bitmap> StartStreaming(Profile profile)
+        public BlockingCollection<Bitmap> StartStreaming(Profile profile, int maxCollectionSize)
         {
             throw new IncorrectCameraStateException("Cannot start streaming, camera is not connected.");
         }

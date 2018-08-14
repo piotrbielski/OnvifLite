@@ -25,8 +25,7 @@ namespace OnvifLite.CameraState
         public CameraConnectedState(Camera camera)
         {
             _camera = camera;
-            _frameQueue = new BlockingCollection<Bitmap>(new ConcurrentQueue<Bitmap>(), 100);
-
+            
             _tokenSource = new CancellationTokenSource();
             _cancellationToken = _tokenSource.Token;
         }
@@ -66,8 +65,10 @@ namespace OnvifLite.CameraState
             _camera.StateObject = new CameraNotConnectedState(_camera);
         }
 
-        public BlockingCollection<Bitmap> StartStreaming(Profile profile)
+        public BlockingCollection<Bitmap> StartStreaming(Profile profile, int maxCollectionSize)
         {
+            _frameQueue = new BlockingCollection<Bitmap>(new ConcurrentQueue<Bitmap>(), maxCollectionSize);
+
             var proxyFactory = new ProxyFactory<Media, MediaClient>();
             var mediaClient = proxyFactory.CreateProxy(_camera.ServiceAddress);
 
@@ -78,7 +79,7 @@ namespace OnvifLite.CameraState
             streamSetup.Transport.Protocol = TransportProtocol.RTSP;
 
             var streamingUrl = mediaClient.GetStreamUriAsync(streamSetup, profile.token).Result;
-            var uriParts = streamingUrl.Uri.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+            var uriParts = streamingUrl.Uri.Split(new string[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
             var uri = string.Empty;
 
             mediaClient.Close();
@@ -89,7 +90,7 @@ namespace OnvifLite.CameraState
             }
             else
             {
-                throw new InvalidUriAddressException("Stream URI address is incorrect.");
+                throw new InvalidUriAddressException($"Stream URI address is incorrect ({streamingUrl.Uri}).");
             }
 
             Task.Factory.StartNew(() => FrameProducer(uri));

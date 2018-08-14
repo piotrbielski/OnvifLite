@@ -82,9 +82,9 @@ namespace OnvifLite
             StateObject = new CameraNotConnectedState(this);
         }
 
-        public BlockingCollection<Bitmap> StartStreaming(Profile profile)
+        public BlockingCollection<Bitmap> StartStreaming(Profile profile, int maxCollectionSize)
         {
-            return StateObject.StartStreaming(profile);
+            return StateObject.StartStreaming(profile, maxCollectionSize);
         }
 
         public void StopStreaming()

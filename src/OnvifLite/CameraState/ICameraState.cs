@@ -9,7 +9,7 @@ namespace OnvifLite.CameraState
     {
         void Connect();
         void Disconnect();
-        BlockingCollection<Bitmap> StartStreaming(Profile profile);
+        BlockingCollection<Bitmap> StartStreaming(Profile profile, int maxCollectionSize);
         void StopStreaming();
     }
 }
