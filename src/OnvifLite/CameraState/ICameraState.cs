@@ -1,7 +1,7 @@
-﻿using CameraMediaService;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Drawing;
+using OnvifLite.CameraMediaService;
 
 namespace OnvifLite.CameraState
 {

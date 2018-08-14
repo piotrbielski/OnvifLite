@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Net;
-using CameraMediaService;
-using CameraManagementService;
 using OnvifLite.CameraState;
 using System.Collections.Concurrent;
 using System.Drawing;
+using OnvifLite.CameraMediaService;
 
 namespace OnvifLite
 {

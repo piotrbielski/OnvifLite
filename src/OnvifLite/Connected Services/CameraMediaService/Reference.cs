@@ -7,7 +7,7 @@
 // </generowane automatycznie>
 //------------------------------------------------------------------------------
 
-namespace CameraMediaService
+namespace OnvifLite.CameraMediaService
 {
     
     

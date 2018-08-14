@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using CameraMediaService;
-using CameraManagementService;
 using System.ServiceModel.Channels;
 using System.ServiceModel;
 using System.Net;
@@ -12,6 +10,8 @@ using OnvifLite.Attributes;
 using System.Collections.Concurrent;
 using System.Drawing;
 using OnvifLite.Proxy;
+using OnvifLite.CameraManagementService;
+using OnvifLite.CameraMediaService;
 
 namespace OnvifLite.CameraState
 {

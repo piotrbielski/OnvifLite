@@ -1,5 +1,4 @@
 ﻿using System;
-using CameraMediaService;
 using OnvifLite.Exceptions;
 using System.Linq;
 using OnvifLite.Attributes;
@@ -10,6 +9,7 @@ using System.Drawing;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using OnvifLite.Proxy;
+using OnvifLite.CameraMediaService;
 
 namespace OnvifLite.CameraState
 {

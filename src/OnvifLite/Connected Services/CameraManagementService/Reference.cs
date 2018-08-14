@@ -7,13 +7,13 @@
 // </generowane automatycznie>
 //------------------------------------------------------------------------------
 
-namespace CameraManagementService
+namespace OnvifLite.CameraManagementService
 {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="http://www.onvif.org/ver10/device/wsdl", ConfigurationName="CameraManagementService.Device")]
-    public interface Device
+    internal interface Device
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.onvif.org/ver10/device/wsdl/GetServices", ReplyAction="*")]
@@ -16894,13 +16894,13 @@ namespace CameraManagementService
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.0")]
-    public interface DeviceChannel : CameraManagementService.Device, System.ServiceModel.IClientChannel
+    internal interface DeviceChannel : CameraManagementService.Device, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.0")]
-    public partial class DeviceClient : System.ServiceModel.ClientBase<CameraManagementService.Device>, CameraManagementService.Device
+    internal partial class DeviceClient : System.ServiceModel.ClientBase<CameraManagementService.Device>, CameraManagementService.Device
     {
         
         public DeviceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 

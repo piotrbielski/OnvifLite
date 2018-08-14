@@ -3,11 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
-using CameraMediaService;
 using OnvifLite.Attributes;
 using System.Threading;
 using System.Linq;
 using OnvifLite.Exceptions;
+using OnvifLite.CameraMediaService;
 
 namespace OnvifLite.CameraState
 {

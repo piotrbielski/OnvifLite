@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using CameraMediaService;
 using OnvifLite.CameraState;
 using OnvifLite.Attributes;
-using CameraManagementService;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Concurrent;
 using System.Drawing;
 using OnvifLite.Proxy;
 using OnvifLite.Exceptions;
+using OnvifLite.CameraMediaService;
 
 namespace OnvifLite
 {
@@ -73,9 +72,9 @@ namespace OnvifLite
         }
 
         public Camera(System.Net.IPAddress ipAddress)
-        {
-            IPAddress = ipAddress;
+        {            
             StateObject = new CameraNotConnectedState(this);
+            IPAddress = ipAddress;
         }
 
         public Camera()
