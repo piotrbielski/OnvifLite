@@ -8,6 +8,7 @@ using System.Threading;
 using System.Linq;
 using OnvifLite.Exceptions;
 using OnvifLite.CameraMediaService;
+using OnvifLite.Proxy;
 
 namespace OnvifLite.CameraState
 {
@@ -15,11 +16,13 @@ namespace OnvifLite.CameraState
     internal class CameraStreamingState : ICameraState
     {
         private readonly Camera _camera;
+        private readonly ProxyFactory _proxyFactory;
         private readonly CancellationTokenSource _cancellationTokenSource;
 
-        public CameraStreamingState(Camera camera, CancellationTokenSource cancellationTokenSource)
+        public CameraStreamingState(Camera camera, ProxyFactory proxyFactory, CancellationTokenSource cancellationTokenSource)
         {
             _camera = camera;
+            _proxyFactory = proxyFactory;
             _cancellationTokenSource = cancellationTokenSource;
         }
         
@@ -31,7 +34,7 @@ namespace OnvifLite.CameraState
         public void Disconnect()
         {
             _cancellationTokenSource.Cancel();
-            _camera.StateObject = new CameraNotConnectedState(_camera);
+            _camera.StateObject = new CameraNotConnectedState(_camera, _proxyFactory);
         }
 
         public BlockingCollection<Bitmap> StartStreaming(Profile profile, int maxCollectionSize)
@@ -42,7 +45,7 @@ namespace OnvifLite.CameraState
         public void StopStreaming()
         {
             _cancellationTokenSource.Cancel();
-            _camera.StateObject = new CameraConnectedState(_camera);
+            _camera.StateObject = new CameraConnectedState(_camera, _proxyFactory);
         }
     }
 }

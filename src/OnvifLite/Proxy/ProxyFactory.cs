@@ -7,9 +7,7 @@ using System.Net;
 
 namespace OnvifLite.Proxy
 {
-    internal class ProxyFactory<TContract, TService> 
-        where TContract : class
-        where TService : ClientBase<TContract>, TContract
+    internal class ProxyFactory
     {
         private readonly CustomBinding _binding;
         private static readonly CustomBinding _staticBinding;
@@ -44,19 +42,13 @@ namespace OnvifLite.Proxy
             _staticBinding = new CustomBinding(messageBindingElement, transportBindingElement);
         }
 
-        public TService CreateProxy(Uri serviceAddress)
+        public TService Create<TContract, TService>(Uri serviceAddress)
+            where TContract : class
+            where TService : ClientBase<TContract>, TContract
         {
             EndpointAddress endpointAddress = new EndpointAddress(serviceAddress.ToString());
 
             var proxy = (TService)Activator.CreateInstance(typeof(TService), _binding, endpointAddress);
-            return proxy;
-        }
-
-        public static TService Create(Uri serviceAddress)
-        {
-            EndpointAddress endpointAddress = new EndpointAddress(serviceAddress.ToString());
-
-            var proxy = (TService)Activator.CreateInstance(typeof(TService), _staticBinding, endpointAddress);
             return proxy;
         }
     }

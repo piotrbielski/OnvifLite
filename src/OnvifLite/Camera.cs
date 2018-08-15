@@ -16,6 +16,7 @@ namespace OnvifLite
     internal class Camera : ICamera
     {
         private System.Net.IPAddress _ipAddress;
+        private readonly ProxyFactory _proxyFactory;
 
         public ICameraState StateObject { get; set; }
 
@@ -45,7 +46,7 @@ namespace OnvifLite
             {
                 if (State != CameraStateEnum.NotConnected)
                 {
-                    using (var mediaClient = ProxyFactory<Media, MediaClient>.Create(ServiceAddress))
+                    using (var mediaClient = _proxyFactory.Create<Media, MediaClient>(ServiceAddress))
                     {
                         return mediaClient.GetProfilesAsync().Result.Profiles.ToList();
                     }
@@ -72,14 +73,15 @@ namespace OnvifLite
         }
 
         public Camera(System.Net.IPAddress ipAddress)
+            : this()
         {            
-            StateObject = new CameraNotConnectedState(this);
             IPAddress = ipAddress;
         }
 
         public Camera()
         {
-            StateObject = new CameraNotConnectedState(this);
+            _proxyFactory = new ProxyFactory();
+            StateObject = new CameraNotConnectedState(this, _proxyFactory);
         }
 
         public BlockingCollection<Bitmap> StartStreaming(Profile profile, int maxCollectionSize)

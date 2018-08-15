@@ -19,17 +19,19 @@ namespace OnvifLite.CameraState
     internal class CameraNotConnectedState : ICameraState
     {
         private readonly Camera _camera;
+        private readonly ProxyFactory _proxyFactory;
 
-        public CameraNotConnectedState(Camera camera)
+        public CameraNotConnectedState(Camera camera, ProxyFactory proxyFactory)
         {
             _camera = camera;
+            _proxyFactory = proxyFactory;
         }
 
         public void Connect()
         {
             try
             {
-                using (var deviceClient = ProxyFactory<Device, DeviceClient>.Create(_camera.ServiceAddress))
+                using (var deviceClient = _proxyFactory.Create<Device, DeviceClient>(_camera.ServiceAddress))
                 {
                     var timeTest = deviceClient.GetSystemDateAndTimeAsync().Result;
                 }
@@ -52,7 +54,7 @@ namespace OnvifLite.CameraState
                 throw new CameraConnectionException("An unknown error occurred while connecting to the camera. Check the endpoint address and the user credential.", exception);
             }
 
-            _camera.StateObject = new CameraConnectedState(_camera);
+            _camera.StateObject = new CameraConnectedState(_camera, _proxyFactory);
         }
 
         public BlockingCollection<Bitmap> StartStreaming(Profile profile, int maxCollectionSize)

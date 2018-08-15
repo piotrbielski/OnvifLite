@@ -17,15 +17,18 @@ namespace OnvifLite.CameraState
     internal class CameraConnectedState : ICameraState
     {
         private readonly Camera _camera;
+        private readonly ProxyFactory _proxyFactory;
+
         private BlockingCollection<Bitmap> _frameQueue;
 
         private readonly CancellationTokenSource _tokenSource;
         private readonly CancellationToken _cancellationToken;
 
-        public CameraConnectedState(Camera camera)
+        public CameraConnectedState(Camera camera, ProxyFactory proxyFactory)
         {
             _camera = camera;
-            
+            _proxyFactory = proxyFactory;
+
             _tokenSource = new CancellationTokenSource();
             _cancellationToken = _tokenSource.Token;
         }
@@ -62,29 +65,30 @@ namespace OnvifLite.CameraState
 
         public void Disconnect()
         {
-            _camera.StateObject = new CameraNotConnectedState(_camera);
+            _camera.StateObject = new CameraNotConnectedState(_camera, _proxyFactory);
         }
 
         public BlockingCollection<Bitmap> StartStreaming(Profile profile, int maxCollectionSize)
         {
             _frameQueue = new BlockingCollection<Bitmap>(new ConcurrentQueue<Bitmap>(), maxCollectionSize);
 
-            var proxyFactory = new ProxyFactory<Media, MediaClient>();
-            var mediaClient = proxyFactory.CreateProxy(_camera.ServiceAddress);
-
-            StreamSetup streamSetup = new StreamSetup();
-            streamSetup.Stream = StreamType.RTPUnicast;
-
-            streamSetup.Transport = new Transport();
-            streamSetup.Transport.Protocol = TransportProtocol.RTSP;
-
-            var streamingUrl = mediaClient.GetStreamUriAsync(streamSetup, profile.token).Result;
-            var uriParts = streamingUrl.Uri.Split(new string[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
+            MediaUri streamingUrl = null;
+            string[] uriParts = null;
             var uri = string.Empty;
+            
+            using (var mediaClient = _proxyFactory.Create<Media, MediaClient>(_camera.ServiceAddress))
+            {
+                StreamSetup streamSetup = new StreamSetup();
+                streamSetup.Stream = StreamType.RTPUnicast;
 
-            mediaClient.Close();
+                streamSetup.Transport = new Transport();
+                streamSetup.Transport.Protocol = TransportProtocol.RTSP;
 
-            if (uriParts.Count() == 2)
+                streamingUrl = mediaClient.GetStreamUriAsync(streamSetup, profile.token).Result;
+                uriParts = streamingUrl.Uri.Split(new string[] { "//" }, StringSplitOptions.RemoveEmptyEntries);                
+            }
+
+            if (uriParts != null && uriParts.Count() == 2)
             {
                 uri = $"{uriParts[0]}//{_camera.ConnectionUser.Login}:{_camera.ConnectionUser.Password}@{uriParts[1]}";
             }
@@ -95,7 +99,7 @@ namespace OnvifLite.CameraState
 
             Task.Factory.StartNew(() => FrameProducer(uri));
 
-            _camera.StateObject = new CameraStreamingState(_camera, _tokenSource);
+            _camera.StateObject = new CameraStreamingState(_camera, _proxyFactory, _tokenSource);
 
             return _frameQueue;
         }
