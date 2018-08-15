@@ -27,21 +27,6 @@ namespace OnvifLite.Proxy
             _binding = new CustomBinding(messageBindingElement, transportBindingElement);
         }
 
-        static ProxyFactory()
-        {
-            var messageBindingElement = new TextMessageEncodingBindingElement()
-            {
-                MessageVersion = MessageVersion.CreateVersion(EnvelopeVersion.Soap12, AddressingVersion.WSAddressing10)
-            };
-
-            var transportBindingElement = new HttpTransportBindingElement()
-            {
-                AuthenticationScheme = AuthenticationSchemes.Digest
-            };
-
-            _staticBinding = new CustomBinding(messageBindingElement, transportBindingElement);
-        }
-
         public TService Create<TContract, TService>(Uri serviceAddress)
             where TContract : class
             where TService : ClientBase<TContract>, TContract
