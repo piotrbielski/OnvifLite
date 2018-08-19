@@ -13,7 +13,7 @@ using OnvifLite.CameraMediaService;
 
 namespace OnvifLite
 {
-    internal class Camera : ICamera
+    internal class Camera : IExtendedCamera
     {
         private System.Net.IPAddress _ipAddress;
         private readonly IProxyFactory _proxyFactory;

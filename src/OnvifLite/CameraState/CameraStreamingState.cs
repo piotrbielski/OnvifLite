@@ -15,11 +15,11 @@ namespace OnvifLite.CameraState
     [CameraState(CameraStateEnum.Streaming)]
     internal class CameraStreamingState : ICameraState
     {
-        private readonly Camera _camera;
+        private readonly IExtendedCamera _camera;
         private readonly IProxyFactory _proxyFactory;
         private readonly CancellationTokenSource _cancellationTokenSource;
 
-        public CameraStreamingState(Camera camera, IProxyFactory proxyFactory, CancellationTokenSource cancellationTokenSource)
+        public CameraStreamingState(IExtendedCamera camera, IProxyFactory proxyFactory, CancellationTokenSource cancellationTokenSource)
         {
             _camera = camera;
             _proxyFactory = proxyFactory;

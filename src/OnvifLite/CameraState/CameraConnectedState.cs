@@ -16,7 +16,7 @@ namespace OnvifLite.CameraState
     [CameraState(CameraStateEnum.Connected)]
     internal class CameraConnectedState : ICameraState
     {
-        private readonly Camera _camera;
+        private readonly IExtendedCamera _camera;
         private readonly IProxyFactory _proxyFactory;
 
         private BlockingCollection<Bitmap> _frameQueue;
@@ -24,7 +24,7 @@ namespace OnvifLite.CameraState
         private readonly CancellationTokenSource _tokenSource;
         private readonly CancellationToken _cancellationToken;
 
-        public CameraConnectedState(Camera camera, IProxyFactory proxyFactory)
+        public CameraConnectedState(IExtendedCamera camera, IProxyFactory proxyFactory)
         {
             _camera = camera;
             _proxyFactory = proxyFactory;

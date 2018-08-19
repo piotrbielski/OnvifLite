@@ -18,10 +18,10 @@ namespace OnvifLite.CameraState
     [CameraState(CameraStateEnum.NotConnected)]
     internal class CameraNotConnectedState : ICameraState
     {
-        private readonly Camera _camera;
+        private readonly IExtendedCamera _camera;
         private readonly IProxyFactory _proxyFactory;
 
-        public CameraNotConnectedState(Camera camera, IProxyFactory proxyFactory)
+        public CameraNotConnectedState(IExtendedCamera camera, IProxyFactory proxyFactory)
         {
             _camera = camera;
             _proxyFactory = proxyFactory;
