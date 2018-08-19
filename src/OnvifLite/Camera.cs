@@ -16,7 +16,7 @@ namespace OnvifLite
     internal class Camera : ICamera
     {
         private System.Net.IPAddress _ipAddress;
-        private readonly ProxyFactory _proxyFactory;
+        private readonly IProxyFactory _proxyFactory;
 
         public ICameraState StateObject { get; set; }
 

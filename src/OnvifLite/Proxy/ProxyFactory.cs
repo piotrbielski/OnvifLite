@@ -7,10 +7,9 @@ using System.Net;
 
 namespace OnvifLite.Proxy
 {
-    internal class ProxyFactory
+    internal class ProxyFactory : IProxyFactory
     {
         private readonly CustomBinding _binding;
-        private static readonly CustomBinding _staticBinding;
 
         public ProxyFactory()
         {
