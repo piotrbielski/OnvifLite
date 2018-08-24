@@ -7,13 +7,15 @@
 // </generowane automatycznie>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace OnvifLite.CameraMediaService
 {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("dotnet-svcutil", "1.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="http://www.onvif.org/ver10/media/wsdl", ConfigurationName="CameraMediaService.Media")]
-    public interface Media
+    public interface Media : IDisposable
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.onvif.org/ver10/media/wsdl/GetServiceCapabilities", ReplyAction="*")]
