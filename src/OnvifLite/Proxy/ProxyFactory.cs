@@ -26,13 +26,13 @@ namespace OnvifLite.Proxy
             _binding = new CustomBinding(messageBindingElement, transportBindingElement);
         }
 
-        public TService Create<TContract, TService>(Uri serviceAddress)
+        public TContract Create<TContract, TService>(Uri serviceAddress)
             where TContract : class
             where TService : ClientBase<TContract>, TContract
         {
             EndpointAddress endpointAddress = new EndpointAddress(serviceAddress.ToString());
 
-            var proxy = (TService)Activator.CreateInstance(typeof(TService), _binding, endpointAddress);
+            var proxy = (TContract)Activator.CreateInstance(typeof(TService), _binding, endpointAddress);
             return proxy;
         }
     }
