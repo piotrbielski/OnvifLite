@@ -46,7 +46,7 @@ namespace OnvifLite
             {
                 if (State != CameraStateEnum.NotConnected)
                 {
-                    using (var mediaClient = _proxyFactory.Create<Media, MediaClient>(ServiceAddress))
+                    using (var mediaClient = (MediaClient)_proxyFactory.Create<Media, MediaClient>(ServiceAddress))
                     {
                         return mediaClient.GetProfilesAsync().Result.Profiles.ToList();
                     }
