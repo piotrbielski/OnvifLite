@@ -94,6 +94,7 @@
     <Compile Include="StateTest\ConnectedStateTest.cs" />
     <Compile Include="StateTest\NotConnectedStateTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StateTest\StreamingStateTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
