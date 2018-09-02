@@ -48,5 +48,30 @@ namespace OnvifLiteTest.StateTest
 
             cameraMock.VerifySet(x => x.StateObject = It.Is<ICameraState>(y => y.GetType() == typeof(CameraStreamingState)));
         }
+
+        [TestMethod]
+        public void DisconnectTest()
+        {
+            var cameraMock = new Mock<IExtendedCamera>();
+
+            var connectedState = new CameraConnectedState(cameraMock.Object, It.IsAny<IProxyFactory>());
+            connectedState.Disconnect();
+
+            cameraMock.VerifySet(x => x.StateObject = It.Is<ICameraState>(y => y.GetType() == typeof(CameraNotConnectedState)));
+        }
+
+        [TestMethod]
+        public void StopStreaming()
+        {
+            try
+            {
+                var connectedState = new CameraConnectedState(It.IsAny<IExtendedCamera>(), It.IsAny<IProxyFactory>());
+                connectedState.StopStreaming();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(typeof(IncorrectCameraStateException), e.GetType());
+            }
+        }
     }
 }
