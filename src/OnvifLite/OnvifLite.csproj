@@ -8,15 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="2.1.1" />
     <PackageReference Include="system.drawing.common" Version="4.5.0" />
-    <PackageReference Include="System.Private.ServiceModel" Version="4.5.3" />
-    <PackageReference Include="System.Reflection.DispatchProxy" Version="4.5.1" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.5.0" />
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.5.0" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.5.3" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.5.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.5.3" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.5.0" />
-    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
